@@ -1,4 +1,3 @@
-
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 import React, { useEffect, useState } from "react";
@@ -13,13 +12,11 @@ import {
 import app from "../../firebase";
 
 export default function Homepage() {
-
   const [video, setVideo] = useState(null);
   const [videoLink, setVideoLink] = useState("");
   const [videoProgress, setVideoProgress] = useState(0);
   const [allVideo, setAllVideo] = useState([]);
 
-  
   useEffect(() => {
     video && uploadFile(video);
   }, [video]);
@@ -96,53 +93,62 @@ export default function Homepage() {
   };
 
   const { user } = useContext(UserContext);
-  return (<main className="d-flex flex-row flex-fill ">
-    <div className="d-flex flex-column align-items-center flex-fill ">
-      <h2>All videos</h2>
-      <div
-        
-        style={{
-          minWidth: "1200px",
-          margin: "0 auto",
-        }}
-      >
-        {allVideo &&
-          allVideo.map((video) => (
-           
-            <video  key={video._id} src={video.videoUrl} alt="video"   style={{
-              width: "300px",
-              maxHeight: "300px",
-              marginRight: "20px",
-            }}></video>
-          ))}
+  return (
+    <main className="d-flex flex-row-reverse flex-fill mt-60">
+      <div className="d-flex flex-column align-items-center flex-fill ">
+        <h2>All videos</h2>
+        <div
+          style={{
+            minWidth: "1200px",
+            margin: "0 auto",
+          }}
+        >
+          {allVideo &&
+            allVideo.map((video) => (
+              <video
+                key={video._id}
+                src={video.videoUrl}
+                alt="video"
+                style={{
+                  width: "300px",
+                  maxHeight: "300px",
+                  marginRight: "20px",
+                }}
+              ></video>
+            ))}
+        </div>
       </div>
-    </div>
-    <div className="d-flex flex-column flex-fill align-items-center">
-      { user?(
-        <>
-        <h2>Add Video</h2>
-        <div className="d-flex center flex-column">
-      <form onSubmit={handleSubmit} className="mb-20">
-        <div className="d-flex flex-column mb-20">
-          <label htmlFor="video" className="mb-10">
-            Video :
-          </label>
-          {videoProgress > 0 ? "Uploading: " + videoProgress + "%" : ""}
-          <input
-            type="file"
-            id="video"
-            accept="video/*"
-            onChange={(e) => setVideo(() => e.target.files[0])}
-          />
-               </div>
-        <button className="btn btn-primary">Upload</button>
-      </form> </div> 
-        </>
-      ):(
-        <>
-        <p>Please login to add and like videos</p></>
-      )}
-    </div>
+      <div
+        className="d-flex flex-column flex-fill align-items-center p-fixed"
+        style={{ margin: "10px" }}
+      >
+        {user ? (
+          <>
+            <h2>Add Video</h2>
+            <div className="d-flex center flex-column">
+              <form onSubmit={handleSubmit} className="mb-20">
+                <div className="d-flex flex-column mb-20">
+                  <label htmlFor="video" className="mb-10">
+                    Video :
+                  </label>
+                  {videoProgress > 0 ? "Uploading: " + videoProgress + "%" : ""}
+                  <input
+                    type="file"
+                    id="video"
+                    accept="video/*"
+                    onChange={(e) => setVideo(() => e.target.files[0])}
+                  />
+                </div>
+                <button className="btn btn-primary">Upload</button>
+              </form>{" "}
+            </div>
+          </>
+        ) : (
+          <>
+            <p>Please login to add and like videos</p>
+          </>
+        )}
+      </div>
     </main>
   );
 }
