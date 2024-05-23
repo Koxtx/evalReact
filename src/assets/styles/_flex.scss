@@ -13,6 +13,9 @@
 .flex-column {
   flex-direction: column;
 }
+.flex-column-reverse {
+  flex-direction: column-reverse;
+}
 
 .flex-fill {
   flex: 1 1 auto;
