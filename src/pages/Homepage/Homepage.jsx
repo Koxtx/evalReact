@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 import React, { useEffect, useState } from "react";
+import { toggleLike } from "../../apis/video";
 import {
   getStorage,
   ref,
@@ -67,9 +68,12 @@ export default function Homepage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`, // Include the token
         },
-        body: JSON.stringify({ video: videoLink, titre: titre }),
+        body: JSON.stringify({
+          video: videoLink,
+          titre: titre,
+          user: user.username,
+        }),
       });
 
       if (response.ok) {
@@ -80,7 +84,7 @@ export default function Homepage() {
         setVideoProgress(0);
         setTitre("");
         document.getElementById("video").value = "";
-        document.getElementById("title").value = "";
+        document.getElementById("titre").value = "";
       } else {
         console.error("Failed to add video", await response.text());
       }
@@ -89,20 +93,14 @@ export default function Homepage() {
     }
   };
 
-  const handleLike = (videoId) => {
-    // Implement like functionality here
-  };
-
-  const handleDislike = (videoId) => {
-    // Implement dislike functionality here
-  };
+  function toggleLiked(video) {}
 
   const formatElapsedTime = (date) => {
     const diff = Date.now() - new Date(date).getTime();
     const seconds = Math.floor(diff / 1000);
-    if (seconds >= 3600) {
+    if (seconds > 3600) {
       return Math.floor(seconds / 3600) + " heures";
-    } else if (seconds >= 60) {
+    } else if (seconds > 60) {
       return Math.floor(seconds / 60) + " minutes";
     } else {
       return seconds + " secondes";
@@ -122,7 +120,7 @@ export default function Homepage() {
         >
           {allVideo &&
             allVideo.map((video) => (
-              <div key={video._id}>
+              <div key={video._id} className="m-20">
                 <video
                   src={video.videoUrl}
                   alt="video"
@@ -133,28 +131,39 @@ export default function Homepage() {
                   }}
                   controls
                 ></video>
-                <p>{video.titre}</p>
-                <div>
+
+                <div className="d-flex flex-row align-items-center">
+                  <p className="mr-15">{video.titre}</p>
                   {user ? (
-                    <>
-                      <button onClick={() => handleLike(video._id)}>
-                        Like
-                      </button>
-                      <button onClick={() => handleDislike(video._id)}>
-                        Dislike
-                      </button>
-                    </>
+                    <div className="center">
+                      <i
+                        onClick={toggleLiked}
+                        className={`far fa-thumbs-up mr-25`}
+                      >
+                        {video.likes}
+                      </i>
+                      <i onClick={toggleLiked} className={`far fa-thumbs-down`}>
+                        {video.dislikes}
+                      </i>
+                    </div>
                   ) : null}
                 </div>
-                <div>
+                <div className="d-flex flex-row align-items-center">
                   {user && (
-                    <div>
-                      <img src={user?.avatar} alt="User Avatar" />
-                      <span>Posted by {user?.username}</span>
+                    <div className="mr-25">
+                      <img
+                        src={user.avatars}
+                        alt="User Avatar"
+                        className="mr-15"
+                      />
+                      <span>Posted by {video.user}</span>
                     </div>
                   )}
+
+                  <span>
+                    Ajoutée il y a {formatElapsedTime(video.createdAt)}
+                  </span>
                 </div>
-                <span>Ajoutée il y a {formatElapsedTime(video.createdAt)}</span>
               </div>
             ))}
         </div>
